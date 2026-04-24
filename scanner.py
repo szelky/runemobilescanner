@@ -27,11 +27,9 @@ def find_document_contour(image, min_area_ratio=0.1):
     return None, ratio
 
 def get_best_scan(orig_image):
-    # 1. Deneme: Orijinal
     screenCnt, ratio = find_document_contour(orig_image)
     target_img = orig_image
     
-    # 2. Deneme: Padding (Kenarlar sıfırdaysa)
     if screenCnt is None:
         pad = 20
         padded = cv2.copyMakeBorder(orig_image, pad, pad, pad, pad, cv2.BORDER_CONSTANT, value=[0, 0, 0])

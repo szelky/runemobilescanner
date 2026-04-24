@@ -6,8 +6,9 @@ import numpy as np
 from scanner import get_best_scan
 from transform import four_point_transform
 
-def process_and_save_handler(image, custom_name):
-    if image is None: return None, "Görüntü alınamadı."
+def process_handler(image):
+    if image is None: 
+        return None, "Görüntü alınamadı."
 
     orig = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     screenCnt, ratio, target_img = get_best_scan(orig)
@@ -16,6 +17,15 @@ def process_and_save_handler(image, custom_name):
         return None, "Kağıt kenarı bulunamadı."
 
     warped = four_point_transform(target_img, screenCnt.reshape(4, 2) * ratio)
+    
+    preview_img = cv2.cvtColor(warped, cv2.COLOR_BGR2RGB)
+    return preview_img, "Tarama başarılı. Beğendiyseniz kaydedebilirsiniz."
+
+def save_handler(warped_rgb, custom_name):
+    if warped_rgb is None:
+        return "Kaydedilecek görüntü bulunamadı. Önce tarama yapın."
+
+    warped = cv2.cvtColor(warped_rgb, cv2.COLOR_RGB2BGR)
 
     save_path = "Taramalar"
     os.makedirs(save_path, exist_ok=True)
@@ -29,7 +39,9 @@ def process_and_save_handler(image, custom_name):
 
     _, img_encoded = cv2.imencode(".jpg", warped, [cv2.IMWRITE_JPEG_QUALITY, 95])
     
-    with open(full_path, "wb") as f:
-        f.write(img2pdf.convert(img_encoded.tobytes(), layout_fun=layout_fun))
-
-    return cv2.cvtColor(warped, cv2.COLOR_BGR2RGB), f"A4 PDF Kaydedildi: {fname}"
+    try:
+        with open(full_path, "wb") as f:
+            f.write(img2pdf.convert(img_encoded.tobytes(), layout_fun=layout_fun))
+        return f"A4 PDF Başarıyla Kaydedildi: {fname}"
+    except Exception as e:
+        return f"Hata oluştu: {str(e)}"
