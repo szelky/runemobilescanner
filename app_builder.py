@@ -7,13 +7,13 @@ def create_app():
         
         with gr.Row():
             with gr.Column():
-                input_img = gr.Image(sources=["webcam", "upload"], label="Belge Fotoğrafı", type="numpy")
-                file_name_input = gr.Textbox(label="Dosya Adı (Opsiyonel)", placeholder="Örn: imza_örneği")
+                input_img = gr.Image(sources=["upload"], label="Belge Fotoğrafı", type="numpy", height=650)
                 scan_btn = gr.Button("ŞİMDİ TARA", variant="primary")
+                status = gr.Textbox(label="Sistem Notu")
             
             with gr.Column():
-                output_img = gr.Image(label="Taranmış Hali (Önizleme)", type="numpy")
-                status = gr.Textbox(label="Sistem Notu")
+                output_img = gr.Image(label="Taranmış Hali (Önizleme)", type="numpy", interactive=False, height=650)
+                file_name_input = gr.Textbox(label="Dosya Adı (Opsiyonel)", placeholder="Örn: imza_örneği")
                 save_btn = gr.Button("💾 PDF OLARAK KAYDET", variant="secondary", interactive=False)
 
         scan_btn.click(
